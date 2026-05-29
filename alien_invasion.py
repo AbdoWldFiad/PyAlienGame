@@ -59,6 +59,8 @@ class AlienInvasion:
         if button_clicked and not self.stats.game_active:
             self.stats.reset_stats() # Reset the game statistics.
             self.stats.game_active = True
+            # Reset the game settings.
+            self.settings.initialize_dynamic_settings()
             # Get rid of any remaining aliens and bullets.
             self.aliens.empty()
             self.bullets.empty()
@@ -181,6 +183,7 @@ class AlienInvasion:
             # Destroy existing bullets and create new fleet.
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def _ship_hit(self):
         """Respond to the ship being hit by an alien."""
