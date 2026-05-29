@@ -109,6 +109,24 @@ class AlienInvasion:
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
 
+    def _update_aliens(self):
+        """Update the positions of all aliens in the fleet."""
+        self._check_fleet_edges() #Check if the fleet is at an edge
+        self.aliens.update()
+
+    def _check_fleet_edges(self):
+        """Respond appropriately if any aliens have reached an edge."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+ 
+    def _change_fleet_direction(self):
+        """Drop the entire fleet and change the fleet's direction."""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
     def _update_bullets(self):
         """Update position of bullets and get rid of old bullets."""
         # Update bullet positions.
@@ -117,7 +135,19 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+        
+        self._check_bullet_alien_collisions()
 
+
+    def _check_bullet_alien_collisions(self):
+        # Check for any bullets that have hit aliens.
+        collisions = pygame.sprite.groupcollide( self.bullets, self.aliens, True, True)
+        # to check of all aliens are distorted
+        if not self.aliens:
+            # Destroy existing bullets and create new fleet.
+            self.bullets.empty()
+            self._create_fleet()
+    
     def _update_screen(self):
         """Redraw the screen during each pass through the loop."""
         self.screen.fill(self.settings.bg_color)
@@ -134,6 +164,7 @@ class AlienInvasion:
         while True:
             self._check_events()
             self.ship.update() # Update ship position
+            self._update_aliens()
             self._update_screen()
             self._update_bullets()
 
