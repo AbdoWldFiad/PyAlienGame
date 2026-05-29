@@ -7,6 +7,7 @@ class Settings:
         self.bg_color = (10, 10, 15)
         # Ship settings
         self.ship_speed = 0.95
+        self.ship_limit = 3
         # Alien settings
         self.alien_speed = 0.35
         self.fleet_drop_speed = 10
